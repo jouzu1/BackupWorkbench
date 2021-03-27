@@ -1,0 +1,27 @@
+package com.ujiankedua;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.Scanner;
+
+public class main {
+	
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		UjianKedua ujian = new UjianKedua();
+		Scanner sc = new Scanner(System.in);
+		System.out.println("Selamat datang di cicilan KPR");
+		System.out.println("=====================================");
+		System.out.print("Masukkan jumlah dana yang ingin di pinjam : ");
+		ujian.setPlatfon(sc.nextFloat());
+		System.out.print("Masukkan sukubunga pertahun yang ingin di inginkan : ");
+		ujian.setBunga(sc.nextFloat());
+		System.out.print("Ingin membayar cicilan berapa kali? : ");
+		ujian.setLamapinjam(sc.nextLong());
+	}
+}
+	

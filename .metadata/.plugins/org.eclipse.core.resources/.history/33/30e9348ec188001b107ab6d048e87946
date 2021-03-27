@@ -1,0 +1,36 @@
+package com.ujiankedua;
+
+import java.util.Scanner;
+
+class Rumus{
+	int platfon;
+	double bunga;
+	int lamapinjam;
+	
+	public void setPlatfon(int platfon) {
+		this.platfon = platfon;
+	}
+	public void setBunga(double bunga) {
+		this.bunga = bunga;
+	}
+	public void setLamapinjam(int lamapinjam) {
+		this.lamapinjam = lamapinjam;
+	}
+	
+}
+
+public class Utama {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		Scanner sc = new Scanner (System.in);
+		Rumus ujian = new Rumus();
+		System.out.print("Masukkan jumlah pinjaman yang dibutuhkan : ");
+		ujian.setPlatfon(sc.nextInt());
+		System.out.print("Masukkan sukubunga yang diinginkan : ");
+		ujian.setBunga(sc.nextDouble());
+		System.out.print("Berapa lama ingin mencicil dana? : ");
+		ujian.setLamapinjam(sc.nextInt());
+	}
+
+}

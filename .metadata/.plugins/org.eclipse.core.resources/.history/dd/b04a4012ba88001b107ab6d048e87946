@@ -1,0 +1,46 @@
+package com.ujiankedua;
+
+public class UjianKedua{
+	float platfon,bunga,lamapinjam;
+	float totalAngsuran, angsuranPokok, angsuranBunga, sisapinjaman;
+
+	public void setPlatfon(float platfon) {
+		this.platfon = platfon;
+	}
+
+	public void setBunga(float bunga) {
+		this.bunga = bunga;
+	}
+
+	public void setLamapinjam(float lamapinjam) {
+		this.lamapinjam = lamapinjam;
+	}
+	public void total() {
+		float modif =  (float) (1-(Math.pow(1+(bunga/12), -lamapinjam)));
+		totalAngsuran = platfon * ((bunga/12) / modif);
+	}
+	public void agsp() {
+		angsuranPokok = totalAngsuran - angsuranBunga;
+	}
+	public void agsb() {
+		angsuranBunga = (float) ((bunga/12)*platfon*(Math.pow(((1+(bunga/12))),lamapinjam))/(Math.pow(((1+(bunga/12))),lamapinjam))-1);
+	}
+	public void sisap() {
+		sisapinjaman = platfon - angsuranPokok;
+	}
+	public void show() {
+//		System.out.println("\n======================" +
+//				"===========================");
+//				System.out.println("| Angsuran ke- |  Besar Angsuran  |     Sisa    |");
+//				System.out.println("=================================================");
+				for(int i=1;i<=lamapinjam;i++){
+				total();
+				agsp();
+				agsb();
+				sisap();
+				System.out.println("|Angsuran Ke - "+i+" | Total Angsuran : Rp "+totalAngsuran+" | Angsuran Pokok : Rp "+angsuranPokok+" | Angsuran Bunga : Rp "+angsuranBunga+" | Sisa Pinjaman : Rp "+sisapinjaman+" |");
+				System.out.println("==================================================");
+
+				}
+	}
+}

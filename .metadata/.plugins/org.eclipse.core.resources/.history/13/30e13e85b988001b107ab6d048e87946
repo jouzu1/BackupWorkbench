@@ -1,0 +1,23 @@
+package com.ujiankedua;
+
+public class UjianKedua{
+	float platfon,bunga,lamapinjam;
+	float totalAngsuran, angsuranPokok, angsuranBunga, sisapinjaman;
+
+	public void setPlatfon(float platfon) {
+		this.platfon = platfon;
+	}
+
+	public void setBunga(float bunga) {
+		this.bunga = bunga;
+	}
+
+	public void setLamapinjam(float lamapinjam) {
+		this.lamapinjam = lamapinjam;
+	}
+	public void total() {
+		float modif =  (float) (1-(Math.pow(1+(bunga/12), -lamapinjam)));
+		totalAngsuran = platfon * ((bunga/12) / modif);
+		
+	}
+}

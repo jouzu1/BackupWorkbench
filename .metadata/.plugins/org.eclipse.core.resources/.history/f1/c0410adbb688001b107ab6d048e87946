@@ -1,0 +1,76 @@
+package com.ujiankedua;
+
+public class UjianKedua {
+
+	double platfon;
+	double bunga;
+	double lamapinjaman;
+	double totalAngsuran;
+	double angsuranBunga;
+	
+	double atas = Math.pow(1 + bunga/12, lamapinjaman);
+    double bawah = Math.pow(1 + bunga/12, lamapinjaman)-1;
+    double gabung = atas/bawah;
+    double modif = 1-(Math.pow(1+(bunga/12), -lamapinjaman));
+    
+    
+    
+//    double totalAngsuran = platfon * ((bunga/12) / modif);
+//    double angsuranBunga = (bunga/12)*platfon*(Math.pow(((1+(bunga/12))),lamapinjaman))/(Math.pow(((1+(bunga/12))),lamapinjaman))-1;                
+    double angsuranPokok = totalAngsuran - angsuranBunga;
+    double sisapinjaman = platfon - angsuranPokok;
+	
+	public double getPlatfon() {
+		return platfon;
+	}
+
+	public void setPlatfon(double platfon) {
+		this.platfon = platfon;
+	}
+
+	public double getBunga() {
+		return bunga;
+	}
+
+	public void setBunga(double bunga) {
+		this.bunga = bunga;
+	}
+
+	public double getLamapinjaman() {
+		return lamapinjaman;
+	}
+
+	public void setLamapinjaman(double lamapinjaman) {
+		this.lamapinjaman = lamapinjaman;
+	}
+
+
+	
+	public void totalAngsuran() {
+//		double totalAngsuran = platfon * ((bunga/12) / modif);
+		totalAngsuran = platfon * ((bunga/12) / modif);
+	}
+	
+	public void angsuranPokok() {
+		double angsuranPokok;
+	}
+	
+	public void angsuranBunga() {
+		angsuranBunga = (bunga/12)*platfon*(Math.pow(((1+(bunga/12))),lamapinjaman))/(Math.pow(((1+(bunga/12))),lamapinjaman))-1; 
+	}
+	
+	public void sisaPinjaman() {
+//		double angsuranPokok = 0;
+		double sisapinjaman;
+	}
+	public void showData() {
+		for(int i = 1; i<=getLamapinjaman();i++) {
+			totalAngsuran();
+			angsuranPokok();
+			angsuranBunga();
+			sisaPinjaman();
+			
+			System.out.println("|Angsuran Ke - "+i+" | Total Angsuran : "+totalAngsuran+" | Angsuran Pokok : "+angsuranPokok+" | Angsuran Bunga : "+totalAngsuran+" | Sisa Pinjaman : "+sisapinjaman+" |");
+		}
+	}
+}

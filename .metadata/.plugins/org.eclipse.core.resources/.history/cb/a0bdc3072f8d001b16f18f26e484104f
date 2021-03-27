@@ -1,0 +1,131 @@
+package com.example.demo.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+
+import com.example.demo.model.Cicilan;
+import com.example.demo.model.CicilanRowMapper;
+
+@RestController
+@RequestMapping("/cicilan")
+public class CicilanController {
+	
+	@Autowired
+	JdbcTemplate jdbc;
+	
+//	public int insertCicilan(Cicilan cicilan) {
+//		return jdbc.update("insert into cicilan(id,nik,start_date,end_date) values (" + cicilan.getId() + ",'"
+//				+ cicilan.getNik() + "','" + cicilan.getStart_date() + "','" + cicilan.getEnd_date() + "')");
+//	}
+	
+	public int insertCicilan(Cicilan cicilan) {
+		String qry =("DELIMITER $$\r\n"
+				+ "DROP PROCEDURE IF EXISTS ulangBulan$$\r\n"
+				+ "CREATE PROCEDURE ulangBulan( dateFrom DATETIME, platfon INT , bunga REAL,lamapinjaman INT)\r\n"
+				+ "BEGIN\r\n"
+				+ "    \r\n"
+				+ "        DECLARE df DATETIME;\r\n"
+				+ "        DECLARE lama INT;\r\n"
+				+ "        DECLARE intTotalAngsuran REAL;\r\n"
+				+ "        DECLARE intAngsuranBunga REAL;\r\n"
+				+ "        DECLARE intSisaPinjaman REAL;\r\n"
+				+ "        DECLARE intAngsuranPokok REAL;\r\n"
+				+ "       \r\n"
+				+ "  \r\n"
+				+ "    SET lama = 0;\r\n"
+				+ "    \r\n"
+				+ "    IF ( DATE_FORMAT(dateFrom ,'%d-%m-%Y') = '00-00-0000') THEN\r\n"
+				+ "               SET df = CURRENT_DATE();\r\n"
+				+ "           ELSE\r\n"
+				+ "               SET df = dateFrom;\r\n"
+				+ "           END IF;\r\n"
+				+ "    \r\n"
+				/*+ "    DROP TEMPORARY TABLE IF EXISTS dummy;\r\n"*/
+				+ "    \r\n"
+				+ "    CREATE TEMPORARY TABLE dummy(\r\n"
+				+ "       angsuranke int,\r\n"
+				+ "       tanggal VARCHAR(100),\r\n"
+				+ "       totalAngsuran REAL,\r\n"
+				+ "       angsuranPokok REAL,\r\n"
+				+ "       angsuranBunga REAL,\r\n"
+				+ "       sisaPinjaman REAL\r\n"
+				+ "    );\r\n"
+				+ "\r\n"
+				+ "    WHILE  lama < lamapinjaman DO\r\n"
+				+ "           \r\n"
+				+ "           \r\n"
+				+ " \r\n"
+				+ " 			SET intTotalAngsuran  = bunga/12*platfon*(POWER(((1+(bunga/12))),lamapinjaman))/(POWER(((1+(bunga/12))),lamapinjaman)-1);;\r\n"
+				+ "           IF ( lama <1) THEN\r\n"
+				+ "             \r\n"
+				+ "            \r\n"
+				+ "              SET intAngsuranBunga = bunga/360*30*platfon;;\r\n"
+				+ "              SET intAngsuranPokok = intTotalAngsuran - intAngsuranBunga;\r\n"
+				+ "              SET intSisaPinjaman =  platfon-intAngsuranPokok;\r\n"
+				+ "              \r\n"
+				+ "           ELSE\r\n"
+				+ "           \r\n"
+				+ "             SET intAngsuranBunga = bunga/360*30*sisapinjaman;\r\n"
+				+ "             SET intAngsuranPokok = intTotalAngsuran - intAngsuranBunga;\r\n"
+				+ "             SET intSisaPinjaman =  intSisaPinjaman-intAngsuranPokok;\r\n"
+				+ "             \r\n"
+				+ "           END IF;\r\n"
+				+ "        \r\n"
+				+ "           \r\n"
+				+ "             \r\n"
+				+ "            SET intAngsuranPokok = intTotalAngsuran - intAngsuranBunga;\r\n"
+				+ "            \r\n"
+				+ "           \r\n"
+				+ "  	\r\n"
+				+ "            insert into dummy  values (lama +1 , DATE_FORMAT(df ,'%d-%m-%Y'),intTotalAngsuran,intAngsuranPokok,intAngsuranBunga,intSisaPinjaman);\r\n"
+				+ "            \r\n"
+				+ "            SET df = DATE_ADD(df, INTERVAL 1 MONTH);\r\n"
+				+ "            SET lama = lama +1;\r\n"
+				+ "               \r\n"
+				+ "    END WHILE;\r\n"
+				+ "    \r\n"
+				+ "    select * from dummy ;\r\n"
+				+ "    \r\n"
+				+ "END$$\r\n"
+				+ "DELIMITER ;");
+//		String exec = "CALL ulangBulan ("+cicilan.getAngsuranKe()+",'"+cicilan.getTanggal()+"',"+cicilan.getTotalAngsuran()+","+cicilan.getAngsuranPokok()+","+cicilan.getAngsuranBunga()+","+cicilan.getSisaPinjaman()+")";
+		String exec = qry
+		return jdbc.update(exec);
+	}
+	
+	public List<Cicilan> getCicilan() {
+
+		String sql = "Select * from dummy";
+
+		// Meng-instance object baru dari object List
+		List<Cicilan> cicilan = jdbc.query(sql, new CicilanRowMapper());
+//		System.out.println(absensi);
+		return cicilan;
+		
+	}
+	
+	@PostMapping("")
+//	List<Cicilan> post(@Param("dateFrom"),@Param("platfon"),@Param("bunga"),@Param("lamapinjam") String dateFrom, Integer platfon, Integer bunga, Integer lamapinjam);
+	public String add(@RequestBody Cicilan cicilan) {
+		if (this.insertCicilan(cicilan) == 1) {
+			return "Insert data berhasil";
+		} else {
+			return "Insert data gagal";
+		}
+	}
+	
+	@GetMapping("/data")
+	public List<Cicilan> list() {
+		return getCicilan();
+	}
+}

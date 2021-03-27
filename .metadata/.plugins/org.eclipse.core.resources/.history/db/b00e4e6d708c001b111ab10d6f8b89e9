@@ -1,0 +1,25 @@
+package com.example.demo.model;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import org.springframework.jdbc.core.RowMapper;
+
+public class AbsensiRowMapper implements RowMapper<Absensi>{
+	public Absensi mapRow(ResultSet rs, int rowNum) throws SQLException{
+		Absensi absensi = new Absensi();
+//		absensi.setId(rs.getString("nik"));
+//		absensi.setNama(rs.getString("nama"));
+//		absensi.setAlamat(rs.getString("alamat"));
+//		absensi.setId_salary(rs.getInt("id_salary"));
+		
+		
+		absensi.setId(rs.getInt("id"));
+		absensi.setNik(rs.getString("nik"));
+		absensi.setStart_date(rs.getDate("start_date"));
+		absensi.setEnd_date(rs.getDate("end_date"));
+		return absensi;
+		
+		
+	}
+}

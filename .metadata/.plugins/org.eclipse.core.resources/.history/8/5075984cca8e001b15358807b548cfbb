@@ -1,0 +1,41 @@
+package com.example.demo.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.example.demo.model.Biodata;
+import com.example.demo.model.Worker;
+
+@RestController
+@RequestMapping("/company")
+public class WebserviceController {
+	// Worker
+	/*
+	 * private int worker_id; private String first_name; private String last_name;
+	 * private int salary; private String joining_date; private String departement;
+	 */
+
+	// Title
+	/*
+	 * private int worker_ref_id; private String worker_title; private String
+	 * affected_from;
+	 */
+
+	// Bonus
+	/*
+	 * private int worker_ref_id; private String bonus_date; private int
+	 * bonus_amount;
+	 */
+
+	@Autowired
+	JdbcTemplate jdbc;
+
+	public int insertWorker(Worker worker) {
+		return jdbc.update(
+				"INSERT INTO `worker`(`worker_id`, `first_name`, `last_name`, `salary`, `joining_date`, `departement`) VALUES ()");
+
+	}
+
+}

@@ -1,0 +1,137 @@
+package com.ujiankedua;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.Scanner;
+
+public class main {
+	
+		//Buat driver
+		static final String JDBC = "com.mysql.jdbc.Driver";
+		
+		//Masukkan host
+		static final String DB_URL = "jdbc:mysql://localhost/datapinjaman";
+		
+		//user
+		static final String DB_User = "root";
+		
+		//password
+		static final String DB_Password = "";
+		
+		//Objek Interface untuk nyambungin ke database
+		static Connection conn;
+		
+		//Objek untuk membuat statment static
+		static Statement stat;
+		
+		//Objek untuk menampilkan hasil
+		static ResultSet rs;
+		
+		static InputStreamReader data = new InputStreamReader(System.in);
+		static BufferedReader br = new BufferedReader(data);
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		try 
+		{
+			Class.forName(JDBC);
+			conn = DriverManager.getConnection(DB_URL, "root", "");
+			stat = conn.createStatement();
+			
+			while(!conn.isClosed()) {
+				showMenu();
+			}
+			stat.close();
+			conn.close();
+		}
+		catch (Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	static void showMenu() {
+		System.out.println("===========================");
+		System.out.println("1. Request Pinjaman");
+		System.out.println("2. Simulasi Cicilan");
+		System.out.println("3. Keluar");
+		System.out.print("Masukkan pilihan : ");
+		
+//		String qry = "SELECT * FROM `datapinjaman`";
+//		stat.execute(qry);
+		
+		try {
+			int opt = Integer.parseInt(br.readLine());
+			switch(opt) {
+			case 1:
+				reqPlatfon();
+				break;
+			case 2:
+				
+				showSim();
+				break;
+			case 3:
+				System.exit(0);
+				break;
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	static void reqPlatfon() {
+		try {
+			System.out.println("Masukkan Jumlah Pinjamannya : ");
+			int pinjam = Integer.parseInt(br.readLine());
+			
+			System.out.println("Persentase Bunga Yang di Inginkan : ");
+			int bunga = Integer.parseInt(br.readLine());
+			
+			System.out.println("Berapa bulan anda ingin menyicil ? : ");
+			int lamapinjam = Integer.parseInt(br.readLine());
+			
+			
+//			System.out.print("Masukkan NIM : ");
+//			int nim = Integer.parseInt(br.readLine());
+//			
+//			System.out.print("Masukkan Nama : ");
+//			String nama = br.readLine();
+//			
+//			System.out.print("Masukkan Alamat : ");
+//			String alamat = br.readLine();
+//			
+//			System.out.print("Masukkan Umur : ");
+//			int umur = Integer.parseInt(br.readLine());
+			
+//			String qry = "INSERT INTO `mahasiswa`(`nim`, `nama`, `alamat`, `umur`) VALUES (%d,'%s','%s',%d)";
+//			qry = String.format(qry, nim,nama,alamat,umur);
+//			stat.execute(qry);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	static void showSim() {
+		String qry = "SELECT * FROM `datapinjaman`";
+		try {
+			rs = stat.executeQuery(qry);
+			while(rs.next()){
+				int nim = rs.getInt("nim");
+				String nama = rs.getString("nama");
+				String alamat = rs.getString("alamat");
+				int umur = rs.getInt("umur");
+				
+				System.out.println(String.format("%d %s --> %s (%d)", nim,nama,alamat,umur));
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		}
+	
+	
+
+}

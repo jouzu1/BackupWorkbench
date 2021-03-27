@@ -1,0 +1,51 @@
+package com.ujiankedua;
+
+public class UjianKedua {
+
+	private double platfon;
+	private double bunga;
+	private double lamapinjaman;
+	
+	public double getPlatfon() {
+		return platfon;
+	}
+
+	public void setPlatfon(double platfon) {
+		this.platfon = platfon;
+	}
+
+	public double getBunga() {
+		return bunga;
+	}
+
+	public void setBunga(double bunga) {
+		this.bunga = bunga;
+	}
+
+	public double getLamapinjaman() {
+		return lamapinjaman;
+	}
+
+	public void setLamapinjaman(double lamapinjaman) {
+		this.lamapinjaman = lamapinjaman;
+	}
+
+
+	
+	public void totalAngsuran() {
+		
+	}
+	
+	public void angsuranPokok() {
+		
+	}
+	
+	public void angsuranBunga() {
+		
+	}
+	
+	public void sisaPinjaman() {
+//		double angsuranPokok = 0;
+	}
+	
+}

@@ -1,0 +1,223 @@
+create table karyawan (nik varchar(100),nama varchar(150),alamat varchar(200), saldo int(100))
+
+DELIMITER ##
+DROP PROCEDURE IF EXISTS insert_data##
+CREATE PROCEDURE insert_data(nik varchar(100),nama varchar(150),alamat varchar(200), saldo int(100))
+BEGIN
+INSERT INTO karyawan values (nik,nama,alamat,saldo);
+END##
+
+DELIMITER ;
+
+call insert_data('123','dewabrata','Jl Buntu',1000000);
+
+DELIMITER $$
+DROP PROCEDURE IF EXISTS isi_saldo$$
+CREATE PROCEDURE isi_saldo(nik varchar(100),jml_uang int(100))
+BEGIN
+UPDATE karyawan set saldo = saldo+jml_uang where nik = nik ;
+END$$
+DELIMITER ;
+
+call isi_saldo('123',500000)
+
+call insert_data('456','dewi','Jl Nyasar',1000000);
+
+DELIMITER $$
+DROP PROCEDURE IF EXISTS transfer$$
+CREATE PROCEDURE transfer(nik_pengirim varchar(100),nik_penerima varchar(100),jml_uang int(100))
+BEGIN
+UPDATE karyawan set saldo = saldo-jml_uang where nik = nik_pengirim;
+UPDATE karyawan set saldo = saldo+jml_uang where nik = nik_penerima;
+END$$
+DELIMITER ;
+
+call transfer('123','456',500000)
+
+
+
+DELIMITER $$
+CREATE FUNCTION cekJmlPelanggan()
+       RETURNS VARCHAR (100)
+      
+       BEGIN
+           DECLARE jumlah INT;
+           SELECT COUNT(NIK) INTO jumlah FROM karyawan;
+              
+           IF (jumlah > 0) THEN
+              RETURN CONCAT("Jumlah karyawan anda sebanyak ",
+              jumlah, " orang");
+           ELSE
+              RETURN "Anda belum memiliki karyawan";
+           END IF;
+      END$$
+DELIMITER ;
+
+SELECT cekJmlPelanggan() AS cekJmlPelanggan;
+
+DELIMITER $$
+CREATE FUNCTION getDiskon(jumlah INT) RETURNS int(11)
+     BEGIN
+       DECLARE diskon INT;
+       CASE
+           WHEN (jumlah >= 1000000) THEN
+              SET diskon = 10;
+           WHEN (jumlah >= 500000 AND jumlah < 1000000) THEN
+              SET diskon = 5;
+           WHEN (jumlah >= 100000 AND jumlah < 500000) THEN
+              SET diskon = 3;
+           ELSE SET diskon = 0;
+      END CASE;
+      RETURN diskon;
+   END$$
+DELIMITER ;
+
+select nik,nama,alamat,saldo , getDiskon(saldo) as diskon from karyawan
+
+CREATE TABLE audit_karyawan(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nik INT NOT NULL,
+    nama VARCHAR(100) NOT NULL,
+    changedate DATETIME DEFAULT NULL,
+    action VARCHAR(50) DEFAULT NULL
+);
+
+CREATE TRIGGER log_karyawan_update 
+    BEFORE UPDATE ON karyawan
+    FOR EACH ROW 
+ INSERT INTO audit_karyawan
+ SET action = 'update',
+     nik= OLD.nik,
+     nama= OLD.nama,
+     changedate = NOW();
+
+
+CREATE TABLE messages (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    message VARCHAR(255) NOT NULL,
+    created_at DATETIME NOT NULL
+);
+
+CREATE EVENT diulang
+ON SCHEDULE EVERY 1 MINUTE
+STARTS CURRENT_TIMESTAMP
+ENDS CURRENT_TIMESTAMP + INTERVAL 1 MINUTE
+DO
+   INSERT INTO messages(message,created_at)
+   VALUES('Test MySQL recurring Event',NOW());
+
+
+event-scheduler=on
+
+DROP EVENT diulang
+
+SELECT data_karyawan.nik FROM (select * from karyawan) as data_karyawan
+
+
+
+DELIMITER $$
+CREATE FUNCTION hitungAngsuran(platfon INT , bunga REAL,lamapinjaman int)
+       RETURNS REAL 
+       BEGIN
+           DECLARE bungaperbulan REAL;
+           DECLARE hasil REAL;
+           SET bungaperbulan = bunga/12;
+           RETURN bungaperbulan*platfon*(POWER(((1+bungaperbulan)),lamapinjaman))/(POWER(((1+bungaperbulan)),lamapinjaman)-1);
+           
+ END$$
+DELIMITER ;
+
+
+DELIMITER $$
+CREATE FUNCTION angsuranBunga(hari INT , bunga REAL,sisapinjaman REAL)
+       RETURNS REAL
+      
+       BEGIN
+          
+           DECLARE hasil REAL;
+          
+           SET hasil =  bunga/360*30*sisapinjaman;
+           RETURN hasil ;
+           
+
+ END$$
+DELIMITER ;
+
+DELIMITER $$
+DROP PROCEDURE IF EXISTS ulangBulan$$
+CREATE PROCEDURE ulangBulan( dateFrom DATETIME, platfon INT , bunga REAL,lamapinjaman INT)
+BEGIN
+    
+        DECLARE df DATETIME;
+        DECLARE lama INT;
+        DECLARE intTotalAngsuran REAL;
+        DECLARE intAngsuranBunga REAL;
+        DECLARE intSisaPinjaman REAL;
+        DECLARE intAngsuranPokok REAL;
+       
+  
+    SET lama = 0;
+    
+    IF ( DATE_FORMAT(dateFrom ,'%d-%m-%Y') = '00-00-0000') THEN
+               SET df = CURRENT_DATE();
+           ELSE
+               SET df = dateFrom;
+           END IF;
+    
+    DROP TEMPORARY TABLE IF EXISTS dummy;
+    
+    CREATE TEMPORARY TABLE dummy(
+       angsuranke int,
+       tanggal VARCHAR(100),
+       totalAngsuran REAL,
+       angsuranPokok REAL,
+       angsuranBunga REAL,
+       sisaPinjaman REAL
+    );
+
+    WHILE  lama < lamapinjaman DO
+           
+           
+ 
+ 			SET intTotalAngsuran  = hitungAngsuran(platfon,bunga,lamapinjaman);
+           IF ( lama <1) THEN
+             
+            
+              SET intAngsuranBunga = angsuranBunga(30 , bunga , platfon);
+              SET intAngsuranPokok = intTotalAngsuran - intAngsuranBunga;
+              SET intSisaPinjaman =  platfon-intAngsuranPokok;
+              
+           ELSE
+           
+             SET intAngsuranBunga = angsuranBunga(30 , bunga , intSisaPinjaman);
+             SET intAngsuranPokok = intTotalAngsuran - intAngsuranBunga;
+             SET intSisaPinjaman =  intSisaPinjaman-intAngsuranPokok;
+             
+           END IF;
+        
+           
+             
+            SET intAngsuranPokok = intTotalAngsuran - intAngsuranBunga;
+            
+           
+  	
+            insert into dummy  values (lama +1 , DATE_FORMAT(df ,'%d-%m-%Y'),intTotalAngsuran,intAngsuranPokok,intAngsuranBunga,intSisaPinjaman);
+            
+            SET df = DATE_ADD(df, INTERVAL 1 MONTH);
+            SET lama = lama +1;
+               
+    END WHILE;
+    
+    select * from dummy ;
+    
+END$$
+DELIMITER ;
+
+
+
+
+
+
+
+
+

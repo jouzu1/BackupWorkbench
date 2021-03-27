@@ -1,0 +1,80 @@
+package com.example.demo.controller;
+
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.Statement;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.example.demo.model.Absensi;
+import com.example.demo.model.Cicilan;
+import com.example.demo.model.CicilanRowMapper;
+import com.example.demo.model.KPR;
+import com.example.demo.model.KPRDataPost;
+import com.example.demo.model.KPRRowMapper;
+
+@RestController
+@RequestMapping("/kpr")
+public class KPRController {
+
+	@Autowired
+	JdbcTemplate jdbc;
+
+	public List<KPR> nampilinKPR() {
+		String qry = "SELECT * FROM dummy";
+		List<KPR> kpr = jdbc.query(qry, new KPRRowMapper());
+		return kpr;
+	}
+
+	public int insertKPRDataPost(KPRDataPost kprdatapost) {
+		return jdbc.update("CALL ulangBulan ('"+kprdatapost.getDf()+"','"+kprdatapost.getPlatfond()+"','"+kprdatapost.getBunga()+"','"+kprdatapost.getLamapijaman()+"')");
+	}
+
+	//Cara ini untuk meng insert data JSON
+	@PostMapping("/insert")
+	public String insert(@RequestBody KPRDataPost kprdatapost){
+		if(this.insertKPRDataPost(kprdatapost)>=1) {
+			return "Data Berhasil Dimasukkan";
+		}else {
+			return "Data Tidak Berhasil Dimasukkan";
+		}
+	}
+	
+	@PostMapping("/insert1")
+	public List<KPR> insert1(@RequestBody KPRDataPost kprdp){
+		String qry = "CALL ulangBulan ('"+kprdp.getDf()+"','"+kprdp.getPlatfond()+"','"+kprdp.getBunga()+"','"+kprdp.getLamapijaman()+"')";
+		List <KPR> kpr = jdbc.query(qry, new KPRRowMapper());
+		return kpr;
+	}
+	
+	@GetMapping("/show")
+	public List<KPR> show(){
+		return nampilinKPR();
+	}
+	
+//	@PostMapping("")
+//	public String add() {
+//		if (this.insertCicilan() >= 1) {
+//			return "Insert data berhasil";
+//		} else {
+//			return "Insert data gagal";
+//		}
+//	}
+//
+//	@GetMapping("/data")
+//	public List<Cicilan> list() {
+//		return getCicilan();
+//	}
+
+}

@@ -1,0 +1,18 @@
+package com.ujiankedua;
+
+public class UjianKedua {
+
+	private int platfon;
+	private double bunga;
+	private int lamapinjaman;
+	
+	public UjianKedua(int platfon, double bunga, int lamapinjaman) {
+		this.platfon = platfon;
+		this.bunga = bunga;
+		this.lamapinjaman = lamapinjaman;
+	}
+	
+	public UjianKedua() {
+		
+	}
+}

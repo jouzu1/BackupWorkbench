@@ -1,0 +1,67 @@
+package com.ujiankedua;
+
+import java.util.Scanner;
+
+class Rumus{
+	int platfon;
+	double bunga;
+	int lamapinjam;
+	
+	
+	
+	//Rumus-rumus
+	double modif = 1-(Math.pow(1+(bunga/12), -lamapinjam));
+    double totalAngsuran = platfon * ((bunga/12) / modif);
+    double angsuranBunga = (bunga/12)*platfon*(Math.pow(((1+(bunga/12))),lamapinjam))/(Math.pow(((1+(bunga/12))),lamapinjam))-1; 
+    double angsuranPokok = totalAngsuran - angsuranBunga;
+    double sisapinjaman = platfon - angsuranPokok;
+    
+    
+    
+    
+	public void setPlatfon(int platfon) {
+		this.platfon = platfon;
+	}
+	public void setBunga(double bunga) {
+		this.bunga = bunga;
+	}
+	public void setLamapinjam(int lamapinjam) {
+		this.lamapinjam = lamapinjam;
+	}
+	
+	public double totalAngsuran() {
+		return totalAngsuran;
+	}
+	
+	public double angsuranPokok() {
+		return angsuranPokok;
+	}
+	
+	public double angsuranBunga() {
+		return angsuranBunga;
+	}
+	
+	public double sisaPinjaman() {
+		return sisapinjaman;
+	}
+	
+	public void show() {
+		System.out.println(totalAngsuran());
+	}
+}
+
+public class Utama {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		Scanner sc = new Scanner (System.in);
+		Rumus ujian = new Rumus();
+		System.out.print("Masukkan jumlah pinjaman yang dibutuhkan : ");
+		ujian.setPlatfon(sc.nextInt());
+		System.out.print("Masukkan sukubunga yang diinginkan : ");
+		ujian.setBunga(sc.nextDouble());
+		System.out.print("Berapa lama ingin mencicil dana? : ");
+		ujian.setLamapinjam(sc.nextInt());
+	}
+
+}

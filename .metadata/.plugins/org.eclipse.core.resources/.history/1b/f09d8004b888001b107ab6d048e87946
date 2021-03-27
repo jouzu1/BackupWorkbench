@@ -1,0 +1,21 @@
+package com.ujiankedua;
+
+public class UjianKedua{
+	float platfon,bunga,lamapinjam;
+
+	public void setPlatfon(long platfon) {
+		this.platfon = platfon;
+	}
+
+	public void setBunga(long bunga) {
+		this.bunga = bunga;
+	}
+
+	public void setLamapinjam(long lamapinjam) {
+		this.lamapinjam = lamapinjam;
+	}
+	public void total() {
+		float modif =  (float) (1-(Math.pow(1+(bunga/12), -lamapinjam)));
+		
+	}
+}

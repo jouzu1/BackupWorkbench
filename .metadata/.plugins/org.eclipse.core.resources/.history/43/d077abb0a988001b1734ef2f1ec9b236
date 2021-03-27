@@ -1,0 +1,168 @@
+package com.ujiankedua;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.Scanner;
+
+public class main {
+	
+	/**
+	 * Latihan menyambungkan database ke eclipse
+	 * Import beberapa interfaces
+	 */
+	
+	//Buat driver
+	static final String JDBC = "com.mysql.jdbc.Driver";
+	
+	//Masukkan host
+	static final String DB_URL = "jdbc:mysql://localhost/perkuliahan";
+	
+	//user
+	static final String DB_User = "root";
+	
+	//password
+	static final String DB_Password = "";
+	
+	//Objek Interface untuk nyambungin ke database
+	static Connection conn;
+	
+	//Objek untuk membuat statment static
+	static Statement stat;
+	
+	//Objek untuk menampilkan hasil
+	static ResultSet rs;
+	
+	static InputStreamReader data = new InputStreamReader(System.in);
+	static BufferedReader br = new BufferedReader(data);
+	
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		try 
+		{
+			Class.forName(JDBC);
+			conn = DriverManager.getConnection(DB_URL, "root", "");
+			stat = conn.createStatement();
+			
+			while(!conn.isClosed()) {
+				showMenu();
+			}
+			stat.close();
+			conn.close();
+		}
+		catch (Exception e){
+			e.printStackTrace();
+		}
+		
+}
+	static void showMenu() {
+		System.out.println("===========================");
+		System.out.println("1. Masukkan Data");
+		System.out.println("2. Update Data");
+		System.out.println("3. Tampilkan Data");
+		System.out.println("4. Delete Data");
+		System.out.println("5. Keluar");
+		System.out.print("Masukkan pilihan : ");
+		
+		try {
+			int opt = Integer.parseInt(br.readLine());
+			switch(opt) {
+			case 1:
+				insertData();
+				break;
+			case 2:
+				updateData();
+				break;
+			case 3:
+				showData();
+				break;
+			case 4:
+				deleteData();
+				break;
+			case 5:
+				System.exit(0);
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	static void showData() {
+		String qry = "SELECT * FROM mahasiswa";
+		try {
+			rs = stat.executeQuery(qry);
+			while(rs.next()){
+				int nim = rs.getInt("nim");
+				String nama = rs.getString("nama");
+				String alamat = rs.getString("alamat");
+				int umur = rs.getInt("umur");
+				
+				System.out.println(String.format("%d %s --> %s (%d)", nim,nama,alamat,umur));
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		}
+		
+		static void insertData() {
+			try {
+				System.out.print("Masukkan NIM : ");
+				int nim = Integer.parseInt(br.readLine());
+				
+				System.out.print("Masukkan Nama : ");
+				String nama = br.readLine();
+				
+				System.out.print("Masukkan Alamat : ");
+				String alamat = br.readLine();
+				
+				System.out.print("Masukkan Umur : ");
+				int umur = Integer.parseInt(br.readLine());
+				
+				String qry = "INSERT INTO `mahasiswa`(`nim`, `nama`, `alamat`, `umur`) VALUES (%d,'%s','%s',%d)";
+				qry = String.format(qry, nim,nama,alamat,umur);
+				stat.execute(qry);
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		static void updateData() {
+			try {
+				System.out.print("Masukkan NIM Yang Ingin Di ubah: ");
+				int nim = Integer.parseInt(br.readLine());
+				System.out.print("Masukkan Nama : ");
+				String nama = br.readLine();
+				System.out.print("Masukkan Alamat : ");
+				int alamat = Integer.parseInt(br.readLine());
+				System.out.print("Masukkan Umur : ");
+				int umur = Integer.parseInt(br.readLine());
+				
+				String qry = "UPDATE `mahasiswa` SET `nim`=%d,`nama`='%s,`alamat`='%s,`umur`=%d";
+				qry = String.format(qry, nim,nama,alamat,umur);
+				stat.execute(qry);
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		static void deleteData() {
+			try {
+				System.out.print("Masukan Nim yang ingin di hapus= ");
+				int nim = Integer.parseInt(br.readLine());
+
+				String qry = "DELETE FROM `mahasiswa` WHERE  nim = %d";
+
+				qry = String.format(qry, nim);
+				
+				stat.execute(qry);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+		}
+	}
+
